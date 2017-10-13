@@ -28,11 +28,18 @@ USER_KEY = "30a09578ef6545182e25a31589xxxxx"
 API_KEY = "d4283457ab19a76eb73e1b9b0e7xxxxx"
 
 #设置从蒲公英下载应用时的密码
-PYGER_PASSWORD = ""
+PGYER_PASSWORD = ""
+#设置描述信息
+PGYER_DESC = ""
 
+
+# 收件人列表
 mailto_list=['xxx@qq.com','xxx@163.com']
+# 发信服务器
 mail_host="smtp.mxhichina.com"
+# 用户名
 mail_user="kangbing"
+# 邮箱提供商
 mail_postfix="xxx.com"
 
 def send_mail(to_list,sub,content):
@@ -64,10 +71,12 @@ def parserUploadResult(jsonResult):
 	resultCode = jsonResult['code']
 	if resultCode == 0:
 		downUrl = DOWNLOAD_BASE_URL +"/"+jsonResult['data']['appShortcutUrl']
-		print "Upload Success"
-		print "DownUrl is:" + downUrl
-#        if send_mail(mailto_list,"xxxiOS在蒲公英上发布完成","各位同事, xxx项目iOS端蒲公英下载地址:  "+downUrl):
-#            print "Send Email Success"
+		updateTime = jsonResult['data']['appUpdated']
+        print "Upload Success"
+        print "DownUrl is:" + downUrl + "\n" + "UpdateTime is:" + updateTime
+        # 配置好邮箱信息, 及收件人列表, 把注释打开, 即可进行邮件发送
+        # if send_mail(mailto_list,"黄金掌柜iOS在蒲公英上发布完成","   各位同事: \n黄金掌柜项目iOS端蒲公英下载地址: " + downUrl + '\n更新时间:' + updateTime):
+        #     print "Send Email Success"
 	else:
 		print "Upload Fail!"
 		print "Reason:"+jsonResult['message']
@@ -78,7 +87,7 @@ def uploadIpaToPgyer(ipaPath):
     ipaPath = unicode(ipaPath, "utf-8")
     files = {'file': open(ipaPath, 'rb')}
     headers = {'enctype':'multipart/form-data'}
-    payload = {'uKey':USER_KEY,'_api_key':API_KEY,'publishRange':'2','isPublishToPublic':'2', 'password':PYGER_PASSWORD}
+    payload = {'uKey':USER_KEY,'_api_key':API_KEY,'publishRange':'2','isPublishToPublic':'2', 'password':PGYER_PASSWORD,'updateDescription':PGYER_DESC}
     print "uploading...."
     r = requests.post(PGYER_UPLOAD_URL, data = payload ,files=files,headers=headers)
     if r.status_code == requests.codes.ok:
